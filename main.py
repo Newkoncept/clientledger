@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 
+from routers import user_router
 
 app = FastAPI()
 
 
-@app.get('/')
+@app.get('/health')
 def health():
     return "Server running successfully"
 
+
+app.include_router(user_router.router)
