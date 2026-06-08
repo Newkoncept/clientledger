@@ -9,6 +9,13 @@ class UserCreate(BaseModel):
     is_active:bool = Field(default=True)
 
 
+
+class UserLogin(BaseModel):
+    email:str = Field(min_length=5, max_length=100)
+    password:str = Field(min_length=5)
+
+
+
 class UserResponse(BaseModel):
     id:int
     email:str
@@ -22,6 +29,12 @@ class UserResponse(BaseModel):
     }
 
 
-class UserLogin(BaseModel):
-    email:str = Field(min_length=5, max_length=100)
-    password:str = Field(min_length=5)
+class UserLoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
