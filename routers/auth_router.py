@@ -6,7 +6,7 @@ from starlette import status
 from models import User
 from dependencies.db_dependency import db_dependency
 from dependencies.user_dependency import user_dependency, token_dependency
-from schemas.user_schema import UserCreate, UserResponse, UserLogin
+from schemas.user_schema import UserCreate, UserResponse, UserLogin, UserLoginResponse
 from utilities.helpers import item_exists_in_db
 from utilities.user_utilities import authenticate_user, create_access_token, hash_password
 
@@ -32,7 +32,7 @@ def register_new_user(user:UserCreate, db: db_dependency):
     return user_model
 
 
-@router.post("/login", status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=UserLoginResponse)
 def login_user(db:db_dependency, user:UserLogin):
     user_value = authenticate_user(user.email, user.password, db)
 
@@ -44,7 +44,7 @@ def login_user(db:db_dependency, user:UserLogin):
     }
 
 
-@router.post("/login/token", status_code=status.HTTP_200_OK)
+@router.post("/login/token", status_code=status.HTTP_200_OK, response_model=UserLoginResponse)
 def login_token_validator(form_data: token_dependency, db: db_dependency):
     user_value = authenticate_user(form_data.username, form_data.password, db)
 
