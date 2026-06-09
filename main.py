@@ -8,7 +8,6 @@ from routers import (
 app = FastAPI()
 
 
-app.include_router(project_router.router)
 
 
 @app.get('/health', status_code = status.HTTP_200_OK)
@@ -20,3 +19,4 @@ app.include_router(auth_router.router)
 app.include_router(workspace_router.router)
 app.include_router(workspacemember_router.router)
 app.include_router(client_router.router)
+app.include_router(project_router.router)
