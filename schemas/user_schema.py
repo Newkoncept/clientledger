@@ -1,24 +1,23 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 class UserCreate(BaseModel):
-    email:str = Field(min_length=5, max_length=100)
+    email:EmailStr = Field(min_length=5, max_length=100)
     password:str = Field(min_length=5)
-    full_name:str = Field(min_length=10, max_length=80)
-    is_active:bool = Field(default=True)
+    full_name:str = Field(min_length=10, max_length=100)
 
 
 
 class UserLogin(BaseModel):
-    email:str = Field(min_length=5, max_length=100)
+    email:EmailStr = Field(min_length=5, max_length=100)
     password:str = Field(min_length=5)
 
 
 
 class UserResponse(BaseModel):
     id:int
-    email:str
+    email:EmailStr
     full_name:str
     is_active:bool
     created_at:datetime
