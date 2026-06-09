@@ -11,7 +11,7 @@ from schemas.client_schema import ClientCreateRequest, ClientResponse, ClientUpd
 from utilities.helpers import item_exists_in_db
 
 router = APIRouter(
-    prefix = "/client",
+    prefix = "/clients",
     tags = ["clients"]
 )
 
@@ -36,7 +36,7 @@ def create_client(db:db_dependency, user:user_dependency, client:ClientCreateReq
 
 
 
-@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_client(db:db_dependency, user:user_dependency, client:ClientUpdateRequest, id:int):
     client_exists = item_exists_in_db(db, Client, id, "id")
     if not client_exists:

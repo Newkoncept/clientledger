@@ -7,8 +7,8 @@ from models import Workspace, WorkspaceMember
 from schemas.workspace_schema import WorkSpaceRequest, WorkSpaceResponse, WorkspaceFullResponse
 
 router = APIRouter(
-    prefix="/workspace",
-    tags=["workspace"]
+    prefix="/workspaces",
+    tags=["workspaces"]
 )
 
 

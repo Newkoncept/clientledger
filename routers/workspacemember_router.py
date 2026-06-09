@@ -12,7 +12,7 @@ from models.User import User
 from models.Workspace import Workspace
 
 router = APIRouter(
-    prefix="/workspacemember",
+    prefix="/workspace-members",
     tags=["workspace member"]
 )
 
@@ -40,7 +40,7 @@ def add_new_workspace_member(db: db_dependency, user: user_dependency, workspace
     return workspacemember_model
 
 
-@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_member_role(db:db_dependency, user:user_dependency, workspacemember: WorkspaceMemberUpdateRequest, id:int):
     user_exists_in_worskpace = db.query(WorkspaceMember).filter(WorkspaceMember.id == id).first()
     if not user_exists_in_worskpace:

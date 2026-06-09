@@ -44,7 +44,7 @@ def create_project(db:db_dependency, user:user_dependency, project:ProjectCreate
     return project_model
 
 
-@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_project(db:db_dependency, user:user_dependency, project:ProjectUpdateRequest, id:int):
     project_exists = item_exists_in_db(db, Project, id, "id")
     if not project_exists:

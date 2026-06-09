@@ -51,7 +51,7 @@ def create_invoice(db:db_dependency, user:user_dependency, invoice:InvoiceCreate
     return invoice_model
 
 
-@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_invoice(db:db_dependency, user:user_dependency, invoice:InvoiceUpdateRequest, id:int):
     invoice_exists = item_exists_in_db(db, Invoice, id, "id")
     if not invoice_exists:
