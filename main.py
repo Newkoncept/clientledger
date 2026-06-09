@@ -2,11 +2,13 @@ from fastapi import FastAPI
 from starlette import status
 from routers import (
     auth_router, workspace_router, 
-    workspacemember_router, client_router
+    workspacemember_router, client_router,
+    project_router
 )
 app = FastAPI()
 
 
+app.include_router(project_router.router)
 
 
 @app.get('/health', status_code = status.HTTP_200_OK)
