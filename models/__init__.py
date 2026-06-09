@@ -3,5 +3,6 @@ from models.Workspace import Workspace
 from models.WorkspaceMember import WorkspaceMember
 from models.Client import Client
 from models.Project import Project
+from models.Invoice import Invoice
 
-__all__ = ["User", "Workspace", "WorkspaceMember", "Client", "Project"]
+__all__ = ["User", "Workspace", "WorkspaceMember", "Client", "Project", "Invoice"]
