@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from starlette import status
 
 from dependencies.db_dependency import db_dependency
 from dependencies.user_dependency import user_dependency
-from models import Workspace, WorkspaceMember
+
 from schemas.workspace_schema import WorkSpaceRequest, WorkSpaceResponse, WorkspaceFullResponse
+from services import workspace_service
 
 router = APIRouter(
     prefix="/workspaces",
@@ -14,46 +15,15 @@ router = APIRouter(
 
 @router.post("", status_code=status.HTTP_200_OK, response_model=WorkspaceFullResponse)
 def create_new_workspace(db: db_dependency, user: user_dependency, workspace:WorkSpaceRequest):
-    workspace_value = Workspace(**workspace.model_dump())
-    workspace_value.owner_id = user.get("user_id")
-
-    db.add(workspace_value)
-    db.commit()
-    db.refresh(workspace_value)
-
-
-    workspacemember_model = WorkspaceMember(workspace_id = workspace_value.id, 
-                                            user_id = workspace_value.owner_id, 
-                                            role = "owner"
-                                        )
-    db.add(workspacemember_model)
-    db.commit()
-    db.refresh(workspacemember_model)
-
-    return {
-        "workspace": workspace_value,
-        "workspace_member": workspacemember_model
-    }
+    return workspace_service.create_new_workspace(db, user, workspace)
 
 
 @router.get("", response_model=list[WorkSpaceResponse], status_code=status.HTTP_200_OK)
 def get_all_user_workspace(db: db_dependency, user:user_dependency):
-    workspaces = db.query(Workspace).filter(Workspace.owner_id == user.get("user_id")).all()
-    if not workspaces:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "No workspace found")
-    
-    return workspaces
+    return workspace_service.get_all_user_workspace(db, user)
     
 
 @router.get("/{id}", response_model=WorkSpaceResponse, status_code=status.HTTP_200_OK)
 def get_workspace_by_id(db: db_dependency, user:user_dependency, id:int):
-    workspace = db.query(Workspace).filter(Workspace.id == id).first()
-
-    if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "No workspace found")
-    
-    if workspace.id != user.get("user_id"):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Unauthorized access")
-    return workspace
-
+    return workspace_service.get_workspace_by_id(db, user, id)
 
