@@ -18,10 +18,12 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/login/token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 if not SECRET_KEY or not ALGORITHM:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Missing enviroment variables")
+    raise RuntimeError("Missing SECRET_KEY or ALGORITHM environment variable")
+
 
 def hash_password(password:str):
     return pwd_context.hash(password)
+
 
 def verify_password(plain_pwd: str, hashed_pwd: str):
     return pwd_context.verify(plain_pwd, hashed_pwd)

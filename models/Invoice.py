@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, String, Integer, ForeignKey, func, DateTime, Float, Date
+from sqlalchemy import Column, String, Integer, ForeignKey, func, DateTime, Date, DECIMAL
 
 class Invoice(Base):
     __tablename__ = "invoices"
@@ -10,7 +10,7 @@ class Invoice(Base):
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     invoice_number = Column(String, unique=True, nullable=False)
     status = Column(String, nullable=False)
-    amount = Column(Float, nullable=False)
+    amount = Column(DECIMAL(10, 2), nullable=False)
     due_date = Column(Date, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

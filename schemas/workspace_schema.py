@@ -14,7 +14,15 @@ class WorkSpaceResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class WorkspaceFullResponse(BaseModel):
     workspace: WorkSpaceResponse
     workspace_member: WorkspaceMemberResponse
+
+    model_config = {
+        "from_attributes": True
+    }
