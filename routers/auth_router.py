@@ -7,7 +7,7 @@ from models import User
 from dependencies.db_dependency import db_dependency
 from dependencies.user_dependency import user_dependency, token_dependency
 from schemas.user_schema import UserCreate, UserResponse, UserLogin, UserLoginResponse
-from utilities.helpers import item_exists_in_db
+from utilities.helpers import get_db_item_by_column
 from utilities.user_utilities import authenticate_user, create_access_token, hash_password
 
 
@@ -19,7 +19,7 @@ router = APIRouter(
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register_new_user(user:UserCreate, db: db_dependency):
-    if item_exists_in_db(db, User, user.email, "email"):
+    if get_db_item_by_column(db, User, "email", user.email):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email exists already")
     
     user_model = User(**user.model_dump())

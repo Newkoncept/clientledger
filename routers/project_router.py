@@ -12,7 +12,7 @@ from models.Client import Client
 from schemas.project_schema import (ProjectCreateRequest, ProjectUpdateRequest, 
                                     ProjectResponse, ProjectFullSummaryResponse
                                 )
-from utilities.helpers import item_exists_in_db
+from utilities.helpers import get_db_item_by_column
 
 
 router = APIRouter(
@@ -23,11 +23,11 @@ router = APIRouter(
 
 @router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 def create_project(db:db_dependency, user:user_dependency, project:ProjectCreateRequest):
-    workspace_exists = item_exists_in_db(db, Workspace, project.workspace_id, "id")
+    workspace_exists = get_db_item_by_column(db, Workspace, "id", project.workspace_id)
     if not workspace_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= "Workspace not found")
     
-    client_exists = item_exists_in_db(db, Client, project.client_id, "id")
+    client_exists = get_db_item_by_column(db, Client, "id", project.client_id)
     if not client_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= "Client not found")
 
@@ -46,7 +46,7 @@ def create_project(db:db_dependency, user:user_dependency, project:ProjectCreate
 
 @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_project(db:db_dependency, user:user_dependency, project:ProjectUpdateRequest, id:int):
-    project_exists = item_exists_in_db(db, Project, id, "id")
+    project_exists = get_db_item_by_column(db, Project, "id", id)
     if not project_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= "Project not found")
        
@@ -60,7 +60,7 @@ def update_project(db:db_dependency, user:user_dependency, project:ProjectUpdate
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_project(db:db_dependency, user:user_dependency, id:int):
-    project_exists = item_exists_in_db(db, Project, id, "id")
+    project_exists = get_db_item_by_column(db, Project, "id", id)
     if not project_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= "Project not found")
     
@@ -70,7 +70,7 @@ def delete_project(db:db_dependency, user:user_dependency, id:int):
 
 @router.get("/{id}/project", status_code=status.HTTP_200_OK, response_model=ProjectResponse)
 def get_project_by_project_id(db:db_dependency, user:user_dependency, id:int):
-    project_exists= item_exists_in_db(db, Project, id, "id")
+    project_exists= get_db_item_by_column(db, Project, "id", id)
 
     if not project_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Project not found")
@@ -80,13 +80,13 @@ def get_project_by_project_id(db:db_dependency, user:user_dependency, id:int):
 
 @router.get("/{id}/summary", status_code=status.HTTP_200_OK, response_model=ProjectFullSummaryResponse)
 def get_project_full_summary_by_project_id(db:db_dependency, user:user_dependency, id:int):
-    project_exists= item_exists_in_db(db, Project, id, "id")
+    project_exists= get_db_item_by_column(db, Project, "id", id)
 
     if not project_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Project not found")
 
-    workspace_detail = item_exists_in_db(db, Workspace, project_exists.workspace_id, "id")
-    client_detail = item_exists_in_db(db, Client, project_exists.client_id, "id")
+    workspace_detail = get_db_item_by_column(db, Workspace, "id", project_exists.workspace_id)
+    client_detail = get_db_item_by_column(db, Client, "id", project_exists.client_id)
 
     
     return {

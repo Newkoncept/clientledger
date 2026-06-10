@@ -6,7 +6,7 @@ from schemas.workspacemember_schema import (
 from starlette import status
 from dependencies.user_dependency import user_dependency
 from dependencies.db_dependency import db_dependency
-from utilities.helpers import item_exists_in_db
+from utilities.helpers import get_db_item_by_column
 from models.WorkspaceMember import WorkspaceMember
 from models.User import User
 from models.Workspace import Workspace
@@ -19,11 +19,11 @@ router = APIRouter(
 
 @router.post("", response_model=WorkspaceMemberResponse, status_code=status.HTTP_201_CREATED)
 def add_new_workspace_member(db: db_dependency, user: user_dependency, workspacemember: WorkspaceMemberRequest):
-    user_exists_in_db = item_exists_in_db(db, User, workspacemember.user_id, "id")
+    user_exists_in_db = get_db_item_by_column(db, User, "id", workspacemember.user_id)
     if not user_exists_in_db:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
     
-    workspace_exists = item_exists_in_db(db, Workspace, workspacemember.workspace_id, "id")
+    workspace_exists = get_db_item_by_column(db, Workspace, "id", workspacemember.workspace_id)
     if not workspace_exists:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Worskpace not found")
     

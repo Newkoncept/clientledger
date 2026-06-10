@@ -13,7 +13,7 @@ from dependencies.db_dependency import db_dependency
 from schemas.invoice_schema import (InvoiceResponse, InvoiceCreateRequest, 
                                     InvoiceUpdateRequest, InvoiceFullSummaryResponse
                                 )
-from utilities.helpers import item_exists_in_db, invoice_number_generator
+from utilities.helpers import get_db_item_by_column, invoice_number_generator
 
 
 router = APIRouter(
@@ -24,15 +24,15 @@ router = APIRouter(
 
 @router.post("", response_model=InvoiceResponse, status_code=status.HTTP_201_CREATED)
 def create_invoice(db:db_dependency, user:user_dependency, invoice:InvoiceCreateRequest):
-    workspace_exists = item_exists_in_db(db, Workspace, invoice.workspace_id, "id")
+    workspace_exists = get_db_item_by_column(db, Workspace, "id", invoice.workspace_id)
     if not workspace_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Workspace not found")
     
-    client_exists = item_exists_in_db(db, Client, invoice.client_id, "id")
+    client_exists = get_db_item_by_column(db, Client, "id", invoice.client_id)
     if not client_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Client not found")
     
-    project_exists = item_exists_in_db(db, Project, invoice.project_id, "id")
+    project_exists = get_db_item_by_column(db, Project, "id", invoice.project_id)
     if not project_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Project not found")    
     if project_exists.client_id != invoice.client_id :
@@ -53,7 +53,7 @@ def create_invoice(db:db_dependency, user:user_dependency, invoice:InvoiceCreate
 
 @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_invoice(db:db_dependency, user:user_dependency, invoice:InvoiceUpdateRequest, id:int):
-    invoice_exists = item_exists_in_db(db, Invoice, id, "id")
+    invoice_exists = get_db_item_by_column(db, Invoice, "id", id)
     if not invoice_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Invoice not found")    
 
@@ -67,7 +67,7 @@ def update_invoice(db:db_dependency, user:user_dependency, invoice:InvoiceUpdate
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_invoice(db:db_dependency, user:user_dependency, id:int):
-    invoice_exists = item_exists_in_db(db, Invoice, id, "id")
+    invoice_exists = get_db_item_by_column(db, Invoice, "id", id)
     if not invoice_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Invoice not found")    
 
@@ -152,7 +152,7 @@ def get_invoice_by_project_id(db:db_dependency, user:user_dependency,
 
 @router.get("/invoice-number/{invoice_number}", status_code=status.HTTP_200_OK, response_model=InvoiceResponse)
 def get_invoice_by_invoice_number(db:db_dependency, user:user_dependency, invoice_number:str):
-    invoice_exists = item_exists_in_db(db, Invoice, invoice_number, "invoice_number")
+    invoice_exists = get_db_item_by_column(db, Invoice, "invoice_number", invoice_number)
     if not invoice_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Invoice not found")    
 
@@ -161,7 +161,7 @@ def get_invoice_by_invoice_number(db:db_dependency, user:user_dependency, invoic
 
 @router.get("/invoice-id/{id}", status_code=status.HTTP_200_OK, response_model=InvoiceResponse)
 def get_invoice_by_invoice_idr(db:db_dependency, user:user_dependency, id:int):
-    invoice_exists = item_exists_in_db(db, Invoice, id, "id")
+    invoice_exists = get_db_item_by_column(db, Invoice, "id", id)
     if not invoice_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Invoice not found")    
 
@@ -170,13 +170,13 @@ def get_invoice_by_invoice_idr(db:db_dependency, user:user_dependency, id:int):
 
 @router.get("/summary/{invoice_number}", status_code=status.HTTP_200_OK, response_model=InvoiceFullSummaryResponse)
 def get_invoice_summary_by_invoice_number(db:db_dependency, user:user_dependency, invoice_number:str):
-    invoice_exists = item_exists_in_db(db, Invoice, invoice_number, "invoice_number")
+    invoice_exists = get_db_item_by_column(db, Invoice, "invoice_number", invoice_number)
     if not invoice_exists:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Invoice not found")
 
-    workspace_info = item_exists_in_db(db, Workspace, invoice_exists.workspace_id, "id")    
-    client_info = item_exists_in_db(db, Client, invoice_exists.client_id, "id")    
-    project_info = item_exists_in_db(db, Project, invoice_exists.project_id, "id")    
+    workspace_info = get_db_item_by_column(db, Workspace, "id", invoice_exists.workspace_id)
+    client_info = get_db_item_by_column(db, Client, "id", invoice_exists.client_id)
+    project_info = get_db_item_by_column(db, Project, "id", invoice_exists.project_id)
 
     return {
         "invoice": invoice_exists,

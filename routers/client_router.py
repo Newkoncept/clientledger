@@ -8,7 +8,7 @@ from models.Client import Client
 from models.Workspace import Workspace
 
 from schemas.client_schema import ClientCreateRequest, ClientResponse, ClientUpdateRequest
-from utilities.helpers import item_exists_in_db
+from utilities.helpers import get_db_item_by_column
 
 router = APIRouter(
     prefix = "/clients",
@@ -18,7 +18,7 @@ router = APIRouter(
 
 @router.post("", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
 def create_client(db:db_dependency, user:user_dependency, client:ClientCreateRequest):
-    workspace_exists = item_exists_in_db(db, Workspace, client.workspace_id, "id")
+    workspace_exists = get_db_item_by_column(db, Workspace, "id", client.workspace_id)
     if not workspace_exists:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Workspace not found")
     
@@ -38,7 +38,7 @@ def create_client(db:db_dependency, user:user_dependency, client:ClientCreateReq
 
 @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_client(db:db_dependency, user:user_dependency, client:ClientUpdateRequest, id:int):
-    client_exists = item_exists_in_db(db, Client, id, "id")
+    client_exists = get_db_item_by_column(db, Client, "id", id)
     if not client_exists:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "client not found")
     
@@ -54,7 +54,7 @@ def update_client(db:db_dependency, user:user_dependency, client:ClientUpdateReq
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_client(db:db_dependency, user:user_dependency, id:int):
-    client = item_exists_in_db(db, Client, id, "id")
+    client = get_db_item_by_column(db, Client, "id", id)
     if not client:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "client not found")
     
@@ -86,7 +86,7 @@ def get_client_info_with_workspace_id(db: db_dependency, user:user_dependency, i
 
 @router.get("/{id}", status_code=status.HTTP_200_OK, response_model=ClientResponse)
 def get_client_info_with_id(db: db_dependency, user:user_dependency, id:int):
-    client = item_exists_in_db(db, Client, id, "id")
+    client = get_db_item_by_column(db, Client, "id", id)
     if not client:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "client not found")
     
