@@ -1,6 +1,7 @@
+from decimal import Decimal
+
 from pydantic import BaseModel, Field
 from datetime import datetime, date
-from typing import Optional
 from enum import Enum
 
 from schemas.client_schema import ClientResponse
@@ -21,13 +22,13 @@ class InvoiceCreateRequest(BaseModel):
     client_id: int = Field(gt = 0)
     project_id: int = Field(gt = 0)
     status: InvoiceStatus 
-    amount: float = Field(gt = 0)
+    amount: Decimal = Field(gt = 0, decimal_places=2)
     due_date: date
 
 
 class InvoiceUpdateRequest(BaseModel):
     status: InvoiceStatus | None = None
-    amount: float | None = Field(gt = 0, default = None)
+    amount: Decimal | None = Field(gt = 0, default = None, decimal_places=2)
     due_date: date | None = None
 
 
@@ -38,7 +39,7 @@ class InvoiceResponse(BaseModel):
     project_id: int
     invoice_number: str 
     status: InvoiceStatus
-    amount: float
+    amount: Decimal
     due_date: date
     created_at: datetime
     updated_at: datetime
@@ -53,7 +54,7 @@ class InvoiceFullResponseBase(BaseModel):
     id: int
     invoice_number: str 
     status: InvoiceStatus
-    amount: float
+    amount: Decimal
     due_date: date
     created_at: datetime
     updated_at: datetime
