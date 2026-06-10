@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DB_CONNECTION")
+if not SQLALCHEMY_DATABASE_URL:
+    raise RuntimeError("Missing DB_CONNECTION environment variable")
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
