@@ -41,7 +41,7 @@ class ProjectUpdateRequest(BaseModel):
     @model_validator(mode="after")
     def validate_due_date(self):
         if self.start_date is not None and self.due_date is not None:
-            if self.due_date <= self.start_date:
+            if self.due_date < self.start_date:
                 raise ValueError("due_date must be greater than start_date")
 
         return self

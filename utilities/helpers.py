@@ -2,6 +2,10 @@ from decimal import Decimal
 import uuid
 from datetime import date, datetime
 
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+from starlette import status
+
 from dependencies.db_dependency import db_dependency
 from utilities.user_utilities import create_access_token
 
@@ -57,3 +61,10 @@ def project_search_filter(db:db_dependency, model, base_column:str, id:int, name
         project_exists = project_exists.filter(getattr(model, "due_date", None) == due_date)
     
     return project_exists.all()
+
+
+def get_project_or_404(db:Session, model, column_name:str, value):
+    project_exists = get_db_item_by_column(db, model, column_name, value)
+    if not project_exists:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= "Project not found")
+    return project_exists
