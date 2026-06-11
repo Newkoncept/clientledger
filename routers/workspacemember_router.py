@@ -3,6 +3,7 @@ from starlette import status
 
 from dependencies.user_dependency import user_dependency
 from dependencies.db_dependency import db_dependency
+from dependencies.permission import ADMIN
 
 from schemas.workspacemember_schema import (
     WorkspaceMemberResponse, WorkspaceMemberRequest, 
@@ -18,21 +19,20 @@ router = APIRouter(
 
 @router.post("", response_model=WorkspaceMemberResponse, status_code=status.HTTP_201_CREATED)
 def add_new_workspace_member(db: db_dependency, user: user_dependency, workspacemember: WorkspaceMemberRequest):
-    return workspacemember_service.add_new_workspace_member(db, user, workspacemember)
+    return workspacemember_service.add_new_workspace_member(db, user, workspacemember, ADMIN)
     
 
 @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_member_role(db:db_dependency, user:user_dependency, workspacemember: WorkspaceMemberUpdateRequest, id:int):
-    workspacemember_service.update_member_role(db, user, workspacemember, id)
+    workspacemember_service.update_member_role(db, user, workspacemember, id, ADMIN)
 
 
 @router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 def remove_workspace_member_by_user_id(db: db_dependency, user: user_dependency, workspacemember: WorkspaceMemberDeleteRequest):
-    workspacemember_service.remove_workspace_member_by_user_id(db, user, workspacemember)
+    workspacemember_service.remove_workspace_member_by_user_id(db, user, workspacemember, ADMIN)
     
-
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_workspace_member(db: db_dependency, user: user_dependency, id:int):
-    workspacemember_service.remove_workspace_member(db, user, id)
+    workspacemember_service.remove_workspace_member(db, user, id, ADMIN)
 
