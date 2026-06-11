@@ -63,8 +63,8 @@ def project_search_filter(db:db_dependency, model, base_column:str, id:int, name
     return project_exists.all()
 
 
-def get_project_or_404(db:Session, model, column_name:str, value):
-    project_exists = get_db_item_by_column(db, model, column_name, value)
-    if not project_exists:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= "Project not found")
-    return project_exists
+def get_or_404(db:Session, model, column_name:str, value, message:str):
+    model_exists = get_db_item_by_column(db, model, column_name, value)
+    if not model_exists:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= message)
+    return model_exists

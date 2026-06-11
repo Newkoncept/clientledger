@@ -10,7 +10,7 @@ from models.Workspace import Workspace
 from models.Client import Client
 
 from schemas.project_schema import ProjectCreateRequest, ProjectStatus, ProjectUpdateRequest
-from utilities.helpers import get_db_item_by_column, project_search_filter, get_project_or_404
+from utilities.helpers import get_db_item_by_column, project_search_filter, get_or_404
 
 
 def create_project(db:Session, user:dict, project:ProjectCreateRequest, role_allowed:list):
@@ -38,7 +38,7 @@ def create_project(db:Session, user:dict, project:ProjectCreateRequest, role_all
 
 
 def update_project(db:Session, user:dict, project:ProjectUpdateRequest, id:int, role_allowed:list):
-    project_exists = get_project_or_404(db, Project, "id", id)
+    project_exists = get_or_404(db, Project, "id", id, "Project not found")
     user_permitted(db, user, project_exists.workspace_id, role_allowed)
 
     project_model = project.model_dump(exclude_unset=True)
@@ -50,7 +50,7 @@ def update_project(db:Session, user:dict, project:ProjectUpdateRequest, id:int, 
 
 
 def delete_project(db:Session, user:dict, id:int, role_allowed:list):
-    project_exists = get_project_or_404(db, Project, "id", id)
+    project_exists = get_or_404(db, Project, "id", id, "Project not found")
     user_permitted(db, user, project_exists.workspace_id, role_allowed)
 
     db.delete(project_exists)
@@ -58,13 +58,13 @@ def delete_project(db:Session, user:dict, id:int, role_allowed:list):
 
 
 def get_project_by_project_id(db:Session, user:dict, id:int, role_allowed:list):
-    project_exists = get_project_or_404(db, Project, "id", id)
+    project_exists = get_or_404(db, Project, "id", id, "Project not found")
     user_permitted(db, user, project_exists.workspace_id, role_allowed)
     return project_exists
 
 
 def get_project_full_summary_by_project_id(db:Session, user:dict, id:int, role_allowed:list):
-    project_exists = get_project_or_404(db, Project, "id", id)
+    project_exists = get_or_404(db, Project, "id", id, "Project not found")
     user_permitted(db, user, project_exists.workspace_id, role_allowed)
 
 
